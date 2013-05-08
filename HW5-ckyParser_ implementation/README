@@ -1,0 +1,31 @@
+################################################################### ReadMe ###################################################
+
+1. For questions 1 and 2,
+
+python q1.py
+
+2. For parsing dev.strings file
+
+python q3.py 'dev.strings'
+
+python postprocess.py outputfile.parses > dev.parses.post
+
+python evalb.py dev.parses.post dev.trees
+
+3. For parsing test file
+
+python q3.py 'test.strings'
+
+python postprocess.py outputfile.parses > test.parses.post
+
+python evalb.py test.parses.post test.trees
+
+
+
+Description of output files produced :
+
+1. outputfile.parses - file containing parsed output string
+2. train.grammar - file containing grammar learnt from the train file
+3. cky.runtime - File containing length of each input sentence and the CKY parsing runtime for that input sentence
+ 
+ 

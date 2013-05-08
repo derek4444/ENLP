@@ -1,0 +1,14 @@
+Includes
+
+1. Simple Good Turing
+2. Jelenik Mercer Smoothing without backoff
+
+for unigram,bigram and trigram models
+
+Running instructions :
+
+1. python filename
+
+in unix shell prompt
+
+2. Run the output FSA in the carmel as given in the instructions in the pdf

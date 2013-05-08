@@ -1,0 +1,231 @@
+import fileinput
+import sys
+import math
+
+stateid = 2
+startstate = 1
+finalstate = 0
+
+#### Simple Good Turing Method for smoothing Language Models
+
+def sgtbigram(trainfile,outputfile) :
+	alphabets = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_']
+	bigramcountmap = dict()
+	bigramclassmap = dict()
+	bigramclasscountmap = dict()
+	zrvaluemap = dict()
+	totalbigrams = 0
+	totaltrainingbigrams = 0
+	rvaluemap = dict()	
+	totalbigramsfromfile = 0
+	unigramfreqcount = dict()
+	bigramprobmap = dict()
+
+	token1 = 'S'
+	token2 = 'E'
+	token = ''
+	for element in alphabets :
+		tokenstart = token1 + element
+		tokenend = element + token2
+		bigramcountmap[tokenstart] = 0.0
+		bigramcountmap[tokenend] = 0.0
+		
+	for element1 in alphabets :
+		for element2 in alphabets :
+			token = element1 + element2
+			bigramcountmap[token] = 0.0
+			
+	token = token1 + token2
+	bigramcountmap[token] = 0.0
+
+	for inputline in fileinput.input('TRAIN') :
+		inputline = inputline.strip('\r\n')
+		inputline = inputline.strip(' ')
+		if len(inputline) == 0 :
+			continue
+		start = 0
+		currentalphaid = 0
+		previousalphaid = 0
+		previouscharacter = 'S'
+		token = ''
+
+		for character in inputline :
+			if character == ' ' :
+				continue
+			token =  previouscharacter + character
+			bigramcountmap[token] += 1.0
+			previouscharacter = character
+			totalbigramsfromfile += 1.0 
+		
+		token = previouscharacter + 'E'
+		bigramcountmap[token] += 1.0
+
+	totalbigrams = len(bigramcountmap)
+
+	maxrkey = max(bigramcountmap,key = bigramcountmap.get)
+	maxrvalue = int(bigramcountmap[maxrkey])
+
+	bigramlist = [[] for index in range(10000)]
+	listindex = 0
+
+	for key in bigramcountmap :
+		classvalue = int(bigramcountmap[key])
+		if classvalue in bigramclassmap :
+			templist = bigramclassmap[classvalue]
+			templist.append(key)
+		else :
+			bigramlist[listindex].append(key)
+			bigramclassmap[classvalue] = bigramlist[listindex]
+			listindex += 1
+
+	print 'totalbigramsfrom file :',totalbigramsfromfile
+	
+	bgramlength = 0		
+
+	rvaluesortedlist = bigramclassmap.keys()
+	rvaluesortedlist.sort()
+	
+	previousrvalue = 0
+	nextrvalue = 0
+	nrplusonevalue = 0
+
+	for element in rvaluesortedlist :
+		currentnrvalue = len(bigramclassmap[element])
+		currentindex = rvaluesortedlist.index(element)
+		if currentindex < len(rvaluesortedlist) - 1 and currentindex > 0 :
+			nextrvalue = rvaluesortedlist[currentindex + 1]
+			zrvalue = (currentnrvalue)/(0.5 * (nextrvalue - previousrvalue))	
+		else :
+			nextrvalue = 0
+			zrvalue = currentnrvalue
+
+		if element+1 in rvaluesortedlist :
+			nrplusonevalue = len(bigramclassmap[element+1])
+		else :
+			nrplusonevalue = 0
+	
+		rvalue = element
+		valuetuple = (rvalue,currentnrvalue,nrplusonevalue,zrvalue,0,0)
+		bigramclasscountmap[element] = valuetuple
+		previousrvalue = element
+ 
+	previousrvalue = 0
+	currentrvalue = 0
+	slope = 0
+		
+	for index in range(0,maxrvalue + 1) :
+		if index == 0 :
+			continue
+		if index in bigramclasscountmap :
+			currentrvalue = index
+			tuple1 = bigramclasscountmap[previousrvalue]
+			tuple2 = bigramclasscountmap[currentrvalue]
+			y2 = tuple2[3]
+			y1 = tuple1[3]
+			x2 = tuple2[0]
+			x1 = tuple1[0]
+			slope = (y2-y1)/(x2-x1)	
+			intercept = y2 - slope * x2
+			for rvalue in range(previousrvalue + 1,currentrvalue) :
+				zrvalue = slope * rvalue + intercept
+				valuetuple = (rvalue,0,0,zrvalue,0,0)
+				bigramclasscountmap[rvalue] = valuetuple
+			previousrvalue = currentrvalue
+				
+		
+	for index in range(0,maxrvalue + 1) :
+		tuple = bigramclasscountmap[index]
+		zrvaluemap[index] = tuple[3]
+
+	rvaluemap[0] = zrvaluemap[1]/zrvaluemap[0]
+
+	for index in range(1,maxrvalue) :
+		rvaluemap[index] = ((index+1) * zrvaluemap[index + 1]) / (zrvaluemap[index])
+
+	rvaluemap[maxrvalue] = rvaluemap[maxrvalue - 1]
+
+	for key in bigramcountmap :
+		value = int(bigramcountmap[key])
+		newfreq = rvaluemap[value]
+		bigramcountmap[key] = newfreq
+		print key,bigramcountmap[key]
+
+	unigramfreqcount['S'] = 0
+	unigramfreqcount['E'] = 0
+	
+	for element in alphabets :
+		unigramfreqcount[element] = 0
+
+	for key in bigramcountmap :
+		token1 = key[0]
+		unigramfreqcount[token1] += bigramcountmap[key]
+
+	print 'unigram count :'
+
+	for key in unigramfreqcount :
+		print key,unigramfreqcount[key]
+
+	#print 'probability values :'
+
+	tempprobdict = dict()
+
+	tempprobdict['S'] = 0.0
+	tempprobdict['E'] = 0.0
+	for element in alphabets :
+		tempprobdict[element] = 0.0
+
+	for key in bigramcountmap :
+		token1 = key[0]
+		bigramprobmap[key] = bigramcountmap[key]/unigramfreqcount[token1]
+		#print key,bigramprobmap[key]
+		tempprobdict[token1] += bigramprobmap[key]
+	
+	writefsa(alphabets,bigramprobmap,'bigramsgt.wfsa')
+
+	fileinput.close()
+
+####	Writing the ouptut in the format accepted by Carmel
+
+def writefsa(alphabets,bigramprobmap,outputfilename) :
+	global stateid 
+	global startstate
+	global finalstate
+	statemap = dict()
+	newline = '\r\n'
+	epsilon = '*e*'
+
+	for element in alphabets :
+		statemap[element] = stateid
+		stateid = stateid + 1
+
+	outputfile = open(outputfilename,'w')
+	outputstring = "%s%s" % (finalstate,newline)
+	outputfile.write(outputstring)
+	token1 = 'S'
+	token2 = 'E'
+
+	for element in alphabets :
+		token = token1 + element
+		outputstring = "(%s (%s %s %s %s))%s" % (startstate,statemap[element],epsilon,element,bigramprobmap[token],newline) 	
+		outputfile.write(outputstring)
+		token = element + token2
+		outputstring = "(%s (%s %s %s %s))%s" % (statemap[element],finalstate,epsilon,epsilon,bigramprobmap[token],newline) 	
+		outputfile.write(outputstring)
+
+	token = 'S' + 'E'
+	outputstring = "(%s (%s %s %s %s))%s" % (startstate,finalstate,epsilon,epsilon,bigramprobmap[token],newline) 	
+	outputfile.write(outputstring)
+
+	for element1 in alphabets :
+		for element2 in alphabets :
+			token = element1 + element2
+			outputstring = "(%s (%s %s %s %s))%s" % (statemap[element1],statemap[element2],epsilon,element2,bigramprobmap[token],newline)
+			outputfile.write(outputstring)
+		
+	print 'inside the write fsa function'
+	outputfile.close()
+	
+
+if __name__ == '__main__' :
+	sgtbigram(sys.argv[1],sys.argv[2])
+

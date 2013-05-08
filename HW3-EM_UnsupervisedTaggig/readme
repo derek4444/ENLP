@@ -1,0 +1,36 @@
+--------------------------------------------------------Read Me-------------------------------------
+
+7349-7199-00
+karuppus@usc.edu
+Satheeshkumar Karuppusamy
+
+
+Question number2 : EM Algorithm
+
+1. Use the below command to run the program
+
+	python q2.py --! #randomrestartcount --i #iterations -HJ TRAIN
+
+	or
+
+	python q2.py
+
+	This will set the default values to all the above arguments
+	#random restarts = 30
+	#iterationcount = 40
+	filename = 'TRAIN'
+
+Question number3 : Processing COPIALE corpus using EM Algorithm
+
+2. Use the below command to run the program
+
+	python q2.py --! #randomrestartcount --i #iterations -HJ COPIALE.txt
+
+	or
+
+	python q2.py
+
+	This will set the default values to all the above arguments
+	#random restarts = 30
+	#iterationcount = 40
+	filename = 'COPIALE.txt'

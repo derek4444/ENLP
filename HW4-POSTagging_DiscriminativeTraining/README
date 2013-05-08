@@ -1,0 +1,31 @@
+-------------------------------------------------------------README----------------------------------
+
+
+
+SATHEESHKUMAR KARUPPUSAMY
+karuppus@usc.edu
+7349-7199-00
+
+Question #1 :
+
+		python q1.py
+
+Question #2 :
+
+PERCEPTRON : 
+
+		python perceptron.py
+
+MAX-MARGIN without suffix feature:
+
+		python q3maxmargin.py
+
+
+Question #3 :
+
+MAX-MARGIN using suffix feature:
+
+		python q3maxmargin_with_suffix.py
+
+
+NOTE : Default values are C = 0.05, n = 0.01 and number of iterations = 3 

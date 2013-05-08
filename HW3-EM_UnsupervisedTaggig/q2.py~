@@ -1,0 +1,717 @@
+import fileinput
+import random
+import math
+import sys
+
+probmap = dict()
+charprobmap = dict()
+statemap = dict()
+stateid = 1
+taglist = ['A','B']
+taglist1 = ['c1','c2']
+#inputlist = ['a','b']
+inputlist = []
+alphamap = dict()
+betamap = dict()
+startstate = 1
+endstate = 0
+inputline1 = ''
+nodeArray = []
+edgecost = []
+fractionalcountmap = dict()
+bestmap = dict()
+bestprobability = float('-INF')
+bestoutputtaglist = []
+firsttime = 0
+finalbest = 0
+
+def calcExpectation(restartcount,iterationcount,filename) :
+	global probmap
+	global inputlist
+	global inputline1
+	tempprobmap = dict()
+	tempcharprobmap = dict()	
+	global bestmap
+	global bestprobability
+	global bestoutputtaglist
+	global edgecost
+	global stateid
+
+	print restartcount,iterationcount
+
+	inputline1 = ''
+	for inputline in fileinput.input(filename) :
+		inputline = inputline.strip("\r\n")
+		if len(inputline) == 0 :
+			continue
+		for character in inputline :
+			if character == ' ':
+				continue
+			inputline1 = inputline1 + character
+		inputlist = list(set(inputline1))
+		break 
+	fileinput.close()
+
+	totalnodes = len(inputline1) * 4 + 2
+	edgecost = [[0 for i in range(len(taglist))] for j in range(totalnodes - 2)]
+	stateid = totalnodes - 1
+	
+
+	initializetagprobvalues("source.wfsa")
+	initializecharprobvalues()
+	performEM(iterationcount)
+
+	print restartcount
+
+	i = 0
+	while i < restartcount :
+		print 'Restart',i
+		print '__________'
+		print ''
+		assignRandomRestartValues()
+		performEM(iterationcount)
+		i = i+1
+		print '' 
+		print '---------------------------------------------------------------------------------'
+
+	print 'Channel probabilities greater than 0.1'
+	printchannelprobability(bestmap,0,'bestchannelprob.wfst')
+	printsourceprobability(bestmap,0,'bestsourceprob.wfsa')
+	print 'Probability of the observed sentence : ',bestprobability
+	print 'Decoding for first 50 characters :	 '
+	sentence1 = ''
+	sentence2 = ''
+	for i in range(0,50) :
+		sentence1 = sentence1 + '  '+ inputline1[i]
+		sentence2 = sentence2 + ' ' + bestoutputtaglist[i]	
+		#print inputline1[i],':',bestoutputtaglist[i]
+	print 'Viterbi Decoder : Word and tag sequences'
+	print sentence1
+	print sentence2
+	print ''
+	print 'Probability of decoded tag sequence : ',finalbest	
+
+def performEM(iterationcount) :
+	global inputline1
+	global inputlist
+	global edgecost
+	global alphamap
+	global betamap
+	global bestmap
+	global bestprobability
+	global firsttime
+	global bestoutputtaglist
+	global startstate
+	global endstate
+	revisedprobmap = dict()
+	fractionalcountmap = dict()
+	currentalphavalue = 0.0
+	previousalphavalue = float('-INF')
+	inputlength = len(inputline1)
+			
+	edgecost = createArrayGraph(inputline1)
+	i = 0
+	while i < iterationcount :
+		calcAlphaValues(inputline1)
+		calcBetaValues(inputline1)
+		fractionalcountmap = calcFractionalCount(inputline1)
+		revisedprobmap = calcRevisedProb(inputline1,fractionalcountmap)
+		applyRevisedProb(revisedprobmap)
+		i = i + 1
+
+		sentence1 = 'Alpha value of end node(in logarithmic notation): ',alphamap[endstate]
+		sentence2 = 'Beta value of start node(in logarithmic notation) : ',betamap[startstate]
+		print sentence1
+		print sentence2
+		sentence1 = 'i = ' + str(i) + ' :  Per symbol probability of the observed sentence(Number of character N =  ' + str(len(inputline1))
+		sentence2 = ') : ' + str(math.exp(alphamap[endstate]/len(inputline1)))
+		print sentence1 + sentence2 
+		#print 'i = ',i,' :  Per symbol probability of the sentence : ',math.exp(alphamap[endstate]/len(inputline1))
+		currentalphavalue = alphamap[endstate]
+		assert float(currentalphavalue) > float(previousalphavalue),'current alpha exceeds previous alpha'
+		if ((i != 1) and ((math.exp(currentalphavalue/inputlength) - math.exp(previousalphavalue/inputlength)) < 0.00001)) :
+			sentence1 = 'Per symbol probability of the observed sentence is converged in '
+			sentence2 = str(i) + 'th iteration with the probability of the corpus : '+str(math.exp(alphamap[endstate]/len(inputline1)))   
+			print sentence1 + sentence2
+			break
+		previousalphavalue = currentalphavalue
+
+		 
+	thisalphavalue = math.exp(alphamap[endstate]/len(inputline1))
+
+	if(thisalphavalue > bestprobability) :
+		outputtaglist = decode(inputline1[0:50],revisedprobmap)
+		for key in revisedprobmap :
+			revisedprobmap[key] = math.exp(revisedprobmap[key])
+			bestmap[key] = revisedprobmap[key]
+			bestprobability = math.exp(alphamap[endstate]/len(inputline1))
+		bestoutputtaglist = []
+		for element in outputtaglist :
+			bestoutputtaglist.append(element)
+
+	#printsourceprobability(revisedprobmap,0,'')
+	#printchannelprobability(revisedprobmap,0,'')
+		
+	print 'Best sentence probability till now : ',bestprobability
+	print ''
+
+####	Print Channel FST
+
+def printchannelprobability(tempmap,option,filename) :
+	global taglist
+	global taglist1
+	global endstate
+	global startstate
+	global inputlist
+	epsilon = '*e*'
+	newline = '\r\n'
+	outfile = ''
+	outputstring = ''
+
+	if option == 1 :
+		outfile = open(filename,'w')
+
+	if option == 0:
+		print endstate
+	if option == 1 :
+		ouputstring = "%s%s" % (endstate,newline)
+		outfile.write(outputstring)
+	
+	for i in range(0,len(inputlist)) :
+		for j in range(0,2) :
+			key = taglist[j] + inputlist[i]
+			outputstring = "(%s (%s %s %s %s))\r\n" % (endstate,endstate,taglist1[j],inputlist[i],tempmap[key])
+			if option == 0:
+				print outputstring
+			else :
+				outfile.write(outputstring)
+	if option == 1 :
+		outfile.close()
+
+
+####	Print Source FSA
+
+def printsourceprobability(tempmap,option,filename) :
+	global taglist
+	global taglist1
+	global endstate
+	global startstate
+	epsilon = '*e*'
+	newline = '\r\n'
+	outfile = ''
+	outputstring = ''
+
+	if option == 1 :
+		outfile = open(filename,'w')
+
+	if option == 0:	
+		print endstate
+	else :
+		ouputstring = "%s\r\n" % (endstate	)
+		outfile.write(outputstring)
+	
+	for i in range(0,2) :	
+		key = 'S' + taglist[i]
+		outputstring = "(%s (%s %s %s %s))\r\n" % (startstate,taglist1[i],epsilon,taglist1[i],tempmap[key])
+		if option == 0:
+			print outputstring
+		else :
+			outfile.write(outputstring)
+
+	for i in range(0,2) :
+		for j in range(0,2) :
+			key = taglist[i] + taglist[j]
+			outputstring = "(%s (%s %s %s %s))\r\n" % (taglist1[i],taglist1[j],epsilon,taglist1[j],tempmap[key])
+			if option == 0:
+				print outputstring
+			else :
+				outfile.write(outputstring)
+
+	for i in range(0,2) :	
+		key = taglist[i] + 'F'
+		outputstring = "(%s (%s %s %s %s))\r\n" % (taglist1[i],endstate,epsilon,epsilon,tempmap[key])
+		if option == 0:
+			print outputstring
+		else :
+			outfile.write(outputstring)
+	if option == 1 :
+		outfile.close()
+
+
+####	Viterbi Algorithm for decoding the state sequence
+
+def decode(inputline1,revisedprobmap) :
+	global taglist
+	global inputlist
+	global finalbest
+	bestprev = [[0 for i in range(len(taglist) + 1)] for j in range(len(inputline1) + 1)]
+	bestscore = float('-INF')
+	outputtaglist = [] 
+	Q = [[0 for i in range(len(taglist) + 1)] for j in range(len(inputline1) + 1)]
+	
+	key1 = inputline1[0]
+	for j in range(0,len(taglist)) :
+		key = taglist[j] + key1
+		key2 = 'S' + taglist[j]  
+		Q[0][j] = revisedprobmap[key] + revisedprobmap[key2]
+
+	for i in range(1,len(inputline1)) : 
+		for j in range(0,len(taglist)) :
+			key = taglist[j] + inputline1[i]
+			Q[i][j] = 0.0
+			bestprev[i][j] = 0.0
+			bestscore = float('-INF')
+			for k in range(0,len(taglist)) :
+				key1 = taglist[k] + taglist[j]
+				r = revisedprobmap[key1] + revisedprobmap[key] + Q[i-1][k]
+				if r > bestscore :
+					bestscore = r
+					bestprev[i][j] = k
+					Q[i][j] = r
+	n = len(inputline1)	
+	bestscore = float('-INF')
+	for i in range(0,len(taglist)) :
+		key = taglist[i] + 'F'
+		#bestprev[n][i] = 0.0
+		Q[n][i] = Q[n-1][i] + revisedprobmap[key]
+		   
+	if Q[n][0] > Q[n][1] : 
+		finalbest = 0
+		finalscore = Q[n][0]
+		bestprev[n][i] = 0
+	else :
+		finalbest = 1
+		finalscore = Q[n][1]
+		bestprev[n][i] = 1
+
+	current = finalbest
+	
+	n = len(inputline1) - 1 
+	for i in range(n,-1,-1) :
+		current = bestprev[i][current]
+		outputtaglist.insert(0,taglist1[current])
+
+	finalbest = math.exp(finalscore)
+
+	#print '-------------outputtaglist------------------'
+	#print outputtaglist
+
+	return outputtaglist
+
+def assignRandomRestartValues() :
+	global probmap
+	global charprobmap
+	randomlist = []
+	global inputline1
+	global edgecost
+
+	randomlist = generateRandomProbs(len(taglist))
+	key1 = 'S'
+	for i in range(0,len(taglist)) :
+		key = key1 + taglist[i]
+		probmap[key] = math.log(randomlist[i])
+	for i in range(0,len(taglist)) :
+		randomlist = generateRandomProbs(len(taglist) + 1) 
+		for j in range(0,len(taglist)) :
+			key = taglist[i] + taglist[j]
+			probmap[key] = math.log(randomlist[j])
+		key = taglist[i] + 'F'
+		probmap[key] = math.log(randomlist[len(taglist)])
+	for i in range(len(taglist)) :
+		randomlist = generateRandomProbs(len(inputlist))
+		for j in range(0,len(inputlist)) :
+			key = taglist[i] + inputlist[j]
+			charprobmap[key] = math.log(randomlist[j])
+	edgecost = createArrayGraph(inputline1)
+
+#### Generate random parameter values for initialization
+
+def generateRandomProbs(N):
+	randomvalues = [random.random() for x in xrange(N)]
+	total = sum(randomvalues)
+	return [x/total for x in randomvalues]
+
+####	Log sum calculation
+
+def calculateLogSum(logx,logy) :
+	logsum = 0.0
+	term2 = 0.0
+	term1 = 0.0
+	
+	if logx == float('-INF') :
+		logsum = logy
+	elif logy == float('-INF') :
+		logsum = logx
+	elif logx - logy > 32.0 :
+		logsum = logx
+	elif logx > logy :
+		term2 = 1.0 + math.exp(logy - logx)
+		term2 = math.log(term2)
+		term1 = logx
+		logsum = term1 + term2	
+	elif logy - logx > 32.0 :
+		logsum = logy
+	elif logy > logx :
+		term2 =  1.0 + math.exp(logx - logy)
+		term2 = math.log(term2)
+		term1 = logy
+		logsum = term1 + term2
+	return logsum
+
+####	Reconstruct the lattice with updated parameters
+
+def applyRevisedProb(revisedprobmap):
+	global edgecost
+	global inputline1
+	
+	j = 0
+	for key in ['F','S'] :
+		for i in range(0,len(taglist)) :
+			if j == 0:
+				key1 = taglist[i] + key
+			else :
+				key1 = key + taglist[i]
+			edgecost[j][i] = revisedprobmap[key1]
+		j = j+1
+	for i in range(startstate+1,stateid-1) :
+		key1 = taglist[i%len(taglist)]
+		for j in range(0,2) :
+			if((j == i%2) and ((i-2)%4 < 2)):
+				key = key1 + inputline1[(i-2)/4]
+				edgecost[i][j] = revisedprobmap[key]		 
+			elif((i-2)%4 > 1):
+				key = key1 + taglist[j]
+				edgecost[i][j] = revisedprobmap[key]		 
+			else :
+				edgecost[i][j] = float('-INF')
+
+
+####	Calculate the revised Probability values. Maximization step.
+
+def calcRevisedProb(inputline,fractionalcountmap) :
+	global startstate 
+	global endstate
+	global taglist
+	global alphamap
+	global betamap
+	global edgecost
+	global inputlist
+	revisedprobmap = dict()
+	revisedprobmap.clear()
+	tempsamplespacemap = dict()
+	tempsamplespacemap.clear()
+
+	for key in fractionalcountmap :
+		if((key[1] in taglist) or (key[1] == 'F'))  :
+			key1 = 'T' + key[0]
+			if key1 not in tempsamplespacemap :
+				tempsamplespacemap[key1] = fractionalcountmap[key]
+			else :	
+				tempsamplespacemap[key1] = calculateLogSum(tempsamplespacemap[key1],fractionalcountmap[key])			
+		else :
+			key1 = 'C' + key[0]
+			if key1 not in tempsamplespacemap :
+				tempsamplespacemap[key1] = fractionalcountmap[key]
+			else :	
+				tempsamplespacemap[key1] = calculateLogSum(tempsamplespacemap[key1],fractionalcountmap[key])
+	key = 'S'
+	for element in taglist :
+		key1 = key + element
+		key2 = 'T' + 'S'
+		revisedprobmap[key1] = fractionalcountmap[key1] - tempsamplespacemap[key2]
+	key = 'F'
+	for element in taglist :
+		key1 = element + key
+		key2 = 'T' + element
+		revisedprobmap[key1] = fractionalcountmap[key1] - tempsamplespacemap[key2]
+	for key in inputlist :
+		for element in taglist :
+			key1 = element + key
+			key2 = 'C' + element
+			revisedprobmap[key1] = fractionalcountmap[key1] - tempsamplespacemap[key2]
+	for key1 in taglist :
+		for key2 in taglist :
+			key = key1 + key2
+			key3 = 'T' + key1
+			revisedprobmap[key] = fractionalcountmap[key] - tempsamplespacemap[key3] 
+	del tempsamplespacemap
+	return revisedprobmap
+
+####	Calculate the Fractional counts across edges. Expectation Step.
+
+def calcFractionalCount(inputline) :
+	global startstate 
+	global endstate
+	global taglist
+	global alphamap
+	global betamap
+	global edgecost
+	fractionalcountmap = dict()	
+	totalnodes = len(inputline) * 4 + 2
+	fractionalcountlist = [[0 for i in range(len(taglist))] for j in range(totalnodes - 2)]
+	
+	for i in range(0,2) :
+		fractionalcountlist[1][i] = alphamap[startstate] + edgecost[startstate][i] + betamap[startstate + i + 1] - alphamap[endstate]
+	for i in range(startstate+1,stateid-1) :
+		if i%2 == 0 :			
+			k = 2
+		else :
+			k = 1
+		for j in range(0,len(taglist)) :
+			if edgecost[i][j%2] != float('-INF') :	
+				fractionalcountlist[i][j] = alphamap[i] + edgecost[i][j%2] + betamap[i+k] - alphamap[endstate]
+				k = k + 1
+			else :
+				fractionalcountlist[i][j] = float('-INF')
+				k = k + 1
+	j = stateid - 1
+	for i in range(0,2) :
+		fractionalcountlist[0][i] = alphamap[j] + edgecost[endstate][i] + betamap[endstate] - alphamap[endstate]
+		j = j + 1
+	key = 'S'
+	for i in range(0,2) :
+		key1 = key + taglist[i]
+		fractionalcountmap[key1] = fractionalcountlist[1][i]
+	key = ''
+	for i in range(startstate + 1,stateid-1) :
+		for j in range(0,2) :
+			if((i-2)%4 < 2) :
+				key = taglist[i%2] + inputline[(i-2)/4]
+			else :
+				key = taglist[i%2] + taglist[j%2]
+			if key in fractionalcountmap :
+				fractionalcountmap[key] = calculateLogSum(fractionalcountmap[key],fractionalcountlist[i][j])
+			else :
+				fractionalcountmap[key] = fractionalcountlist[i][j]
+	key = 'F'
+	for i in range(0,2) :
+		key1 = taglist[i] + key
+		fractionalcountmap[key1] = fractionalcountlist[0][i]
+	#print fractionalcountmap
+
+	return fractionalcountmap	
+
+####	Calculate Alpha values
+
+def calcAlphaValues(inputline) :
+	global stateid
+	global edgecost
+	global alphamap
+	global startstate
+	global endstate
+	alphamap.clear()
+	alphamap[startstate] = 0.0 
+
+	nextstate = startstate + 1
+	for i in range(len(taglist)) :
+		alphamap[nextstate] = alphamap[startstate] + edgecost[1][i]
+		nextstate = nextstate + 1
+	for i in range(nextstate,stateid + 1) :
+		for j in range(nextstate-len(taglist),nextstate) :
+			if (i-2)%4 > 1 :
+				if i%2 != j%2 :
+					continue
+			if i not in alphamap :
+				alphamap[i] = alphamap[j] + edgecost[j][i%2]
+			else :
+				term2 = alphamap[j] + edgecost[j][i%2]
+				alphamap[i] = calculateLogSum(alphamap[i],term2)			
+		if i%2 == 1 :
+			nextstate = nextstate + 2
+	nextstate = nextstate -2
+	for i in range(len(taglist)) :
+		if endstate not in alphamap :
+			alphamap[endstate] = alphamap[nextstate] + edgecost[0][i]
+		else : 
+			term2 = alphamap[nextstate] + edgecost[0][i]
+			alphamap[endstate] = calculateLogSum(alphamap[endstate],term2)
+		nextstate = nextstate + 1
+ 
+
+####	Calculate Beta values
+
+def calcBetaValues(inputline) :
+	global stateid
+	global edgecost
+	global betamap
+	global endstate
+	global startstate
+	betamap.clear()
+	betamap[endstate] = 0.0
+
+	nextstate = stateid - 1
+	for i in range(len(taglist)) :
+		betamap[nextstate] = betamap[endstate] + edgecost[0][i]
+		nextstate = nextstate + 1
+
+	nextstate = stateid - 2
+	fromnode = 0
+	tonode = 0
+	for i in range(nextstate,startstate,-1) :
+		if i % 2 == 1:
+			fromnode = i + 2
+			tonode = i
+		else :
+			fromnode = i + 3
+			tonode = i + 1
+
+		for j in range(fromnode,tonode,-1) :
+			if (i-2)%4 < 2 :
+				if i%2 != j%2 :
+					continue
+			if i not in betamap :
+				betamap[i] = betamap[j] + edgecost[i][j%2]
+			else :
+				term2 = betamap[j] + edgecost[i][j%2]
+				betamap[i] = calculateLogSum(betamap[i],term2)
+		if i%2 == 0 :
+			nextstate = nextstate - 2
+	
+	betamap[startstate] = betamap[2] + edgecost[1][0]
+	term2 = betamap[3] + edgecost[1][1]
+	betamap[startstate] = calculateLogSum(betamap[startstate],term2)
+
+####	Construct the DP lattice for Applying Em algorithm
+
+def createArrayGraph(inputline) :
+	global stateid
+	global probmap
+	global startstate
+	global endstate
+	global taglist
+	global edgecost
+
+	i = 0
+	for i in range(0,2) :
+		for j in range(0,len(taglist)) :
+			if i == 1 :
+				key = 'S' + taglist[j]
+				edgecost[i][j] = probmap[key]
+			else :
+				key = taglist[j] + 'F'
+				edgecost[i][j] = probmap[key]
+	key = ''
+	for i in range(2,stateid-1) :
+		tagindex = i % 2 
+		key = taglist[tagindex]
+		for j in range(0,2) :
+			characterindex = (i - 2) % 4
+			if characterindex < 2 :
+				if(i%2 == j%2):
+					key1 = key + inputline[(i - 2)/4]
+					edgecost[i][j] = charprobmap[key1]
+				else :
+					edgecost[i][j] = float('-INF')					
+			else :
+				key1 = key + taglist[j % 2]
+				edgecost[i][j] = probmap[key1]			 	 		
+	return edgecost
+
+
+
+####	Initialize Emission probability values
+
+def initializecharprobvalues() :
+	global charprobmap
+	global inputlist
+	inputlength = len(inputlist)
+
+	for element1 in inputlist :
+		for element2 in taglist :
+			#charprobmap[element2 + element1] = 0.03
+			charprobmap[element2 + element1] = math.log(1.0/inputlength)
+
+
+####	Initialize Transition probability values
+
+def initializetagprobvalues(inputfilename) :
+	global probmap
+	start = 0
+	startstate = '0'
+	
+	for inputline in fileinput.input(inputfilename) :
+		previousletter = ''
+		currentletter = ''
+		if start == 0 :
+			endstate = inputline 
+			start = 1
+			continue
+		temp = ''		
+		templist = []		
+		for character in inputline :
+			if character == '(' or character ==')' :
+				continue
+			if character == ' ':
+				templist.append(temp)
+				temp = ''
+				continue
+			if character == '\r\n' :
+				break
+			temp += character
+		templist.append(temp)
+		if templist[0] == '0' :
+			previousletter = 'S'
+		elif templist[0] == 'c1' :
+			previousletter = 'A'
+		elif templist[0] == 'c2' :
+			previousletter = 'B'
+	 
+		if templist[1] == '0' :
+			currentletter = 'S'
+		elif templist[1] == 'c1' :
+			currentletter = 'A'
+		elif templist[1] == 'c2' :
+			currentletter = 'B'
+		else :
+			currentletter = 'F'
+
+		key = previousletter + currentletter	
+		value = float(templist[4])
+		probmap[key] = math.log(value)
+	fileinput.close()
+
+def testdecode() :
+	global inputlist
+	global taglist
+
+	inputlist = ['a','b','a']
+	taglist = ['A','B']
+	inputline = ('aba')
+	print 'inside test decode'
+	charproblist = [0.7,0.6,0.3,0.4,0.7,0.6]
+	tempprobmap = dict()
+	print inputline
+	tempprobmap['SA'] = math.log(0.6)
+	tempprobmap['SB'] = math.log(0.4)
+	tempprobmap['AA'] = math.log(0.59)
+	tempprobmap['AB'] = math.log(0.39)
+	tempprobmap['BB'] = math.log(0.09)
+	tempprobmap['BA'] = math.log(0.89)
+	tempprobmap['AF'] = math.log(0.02)
+	tempprobmap['BF'] = math.log(0.02)
+
+	i = 0
+	for element1 in inputlist :
+		for element2 in taglist :
+			tempprobmap[element2 + element1] = math.log(charproblist[i])
+			i = i+1
+	print tempprobmap
+	decode(inputline,tempprobmap)
+
+
+if __name__ == '__main__' :
+	restartcount = 30
+	iterationcount = 50
+	filename = 'TRAIN'	
+
+	for i in range(1,len(sys.argv)) :
+		if sys.argv[i] == '--!' :
+			restartcount = int(sys.argv[i+1])
+		elif sys.argv[i] == '--i' :
+			iterationcount = int(sys.argv[i+1])
+		elif sys.argv[i] == '-HJ' :
+			filename = sys.argv[i+1]	
+	#testdecode()
+
+	calcExpectation(restartcount,iterationcount,filename)
+

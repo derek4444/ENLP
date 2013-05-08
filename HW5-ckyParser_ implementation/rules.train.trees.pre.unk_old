@@ -1,0 +1,753 @@
+NP_NP_EX -> there 
+SBAR -> WHNP_WDT S 
+SBAR -> WHNP SQ 
+SBAR -> WHNP_WDT S_VP 
+NP* -> DT JJS 
+NP* -> NP_NN PP 
+NP* -> CD CD 
+NP* -> CD CC 
+NP* -> JJ NNP 
+NP* -> RB DT 
+NP* -> CD NNS 
+NP* -> CD RB 
+NP* -> JJS NN 
+NP* -> JJ JJ 
+NP* -> NP* NN 
+NP* -> DT JJ 
+NP* -> NP* SYM 
+NP* -> NNP NNP 
+NP* -> NP* VP 
+NP* -> NP VP 
+NP* -> QP NNS 
+NP* -> NP* JJ 
+NP* -> DT NN 
+NP* -> NP* PP 
+NP* -> NP NP_NN 
+NP* -> JJS JJ 
+NP* -> NP* NP 
+NP* -> NN NN 
+NP* -> NP_NNP CC 
+NP* -> NP PP 
+NP* -> NP CC 
+NP* -> CC NNP 
+NP* -> DT ADJP 
+NP* -> NP* X_JJ 
+NP* -> NN NNP 
+NP* -> NP_NNS PP 
+NP* -> NP_NN CC 
+NP* -> NP* CC 
+NP* -> DT NNP 
+NP* -> NP_NNS VP 
+NP* -> PDT DT 
+NP* -> NP* CD 
+NP* -> NP* X_TO 
+NP* -> CD NN 
+NP* -> JJ NN 
+NP* -> NP_NNP PP 
+NP* -> NP SBAR 
+NP* -> NP* NNP 
+NP* -> NP NN 
+NP* -> DT CD 
+NP* -> NN CD 
+NP* -> NNP CC 
+NP* -> NP NP 
+NP* -> NNP CD 
+NP* -> NP* ADVP_RB 
+ADVP_RB -> <unk> 
+ADVP_RB -> last 
+ADVP_RB -> here 
+ADVP_RB -> Only 
+ADVP_RB -> daily 
+ADVP_RB -> Now 
+ADVP_RB -> first 
+SQ* -> NP VP 
+SQ* -> NP SQ* 
+SQ* -> NP_NP_EX SQ* 
+SQ* -> NP_PRP VP 
+SQ* -> PP PP 
+SQ* -> NP_NP_EX NP 
+SQ* -> NP VP_VB 
+SQ* -> MD SQ* 
+SQ* -> NP_PRP VP_VB 
+SQ* -> NP_DT NP 
+SQ* -> VBZ SQ* 
+SQ* -> PP SQ* 
+SQ* -> NP NP 
+SQ* -> NP ADJP_JJ 
+SQ* -> NP PP 
+SQ* -> NP_NN VP 
+WDT -> What 
+WDT -> what 
+WDT -> Which 
+WDT -> <unk> 
+FRAG_NP_NN -> <unk> 
+JJ -> Last 
+JJ -> many 
+JJ -> next 
+JJ -> other 
+JJ -> Round 
+JJ -> First 
+JJ -> last 
+JJ -> first 
+JJ -> round 
+JJ -> nonstop 
+JJ -> <unk> 
+WP -> What 
+WP -> what 
+X_JJ -> nonstop 
+PUNC -> ? 
+PUNC -> . 
+RB -> around 
+RB -> o'clock 
+RB -> a.m 
+RB -> as 
+RB -> much 
+RB -> p.m 
+RB -> apart 
+RB -> <unk> 
+NNS -> codes 
+NNS -> stopovers 
+NNS -> dollars 
+NNS -> airlines 
+NNS -> stops 
+NNS -> hours 
+NNS -> flights 
+NNS -> ones 
+NNS -> numbers 
+NNS -> fares 
+NNS -> minutes 
+NNS -> meals 
+NNS -> <unk> 
+NNP -> Jose 
+NNP -> Thursday 
+NNP -> United 
+NNP -> Diego 
+NNP -> Airlines 
+NNP -> City 
+NNP -> Newark 
+NNP -> Los 
+NNP -> Sunday 
+NNP -> Ontario 
+NNP -> Petersburg 
+NNP -> Saint 
+NNP -> New 
+NNP -> International 
+NNP -> Beach 
+NNP -> Southwest 
+NNP -> Paul 
+NNP -> Francisco 
+NNP -> Monday 
+NNP -> Kansas 
+NNP -> Guardia 
+NNP -> Vegas 
+NNP -> York 
+NNP -> Delta 
+NNP -> July 
+NNP -> Friday 
+NNP -> Tampa 
+NNP -> Las 
+NNP -> A 
+NNP -> C 
+NNP -> D 
+NNP -> F 
+NNP -> Louis 
+NNP -> K 
+NNP -> J 
+NNP -> Orlando 
+NNP -> Wednesday 
+NNP -> Lake 
+NNP -> Angeles 
+NNP -> P 
+NNP -> American 
+NNP -> U 
+NNP -> T 
+NNP -> W 
+NNP -> Ohio 
+NNP -> N 
+NNP -> Salt 
+NNP -> Westchester 
+NNP -> Jersey 
+NNP -> Dulles 
+NNP -> Cincinnati 
+NNP -> San 
+NNP -> Tuesday 
+NNP -> S 
+NNP -> Long 
+NNP -> County 
+NNP -> La 
+NNP -> Cleveland 
+NNP -> Milwaukee 
+NNP -> Air 
+NNP -> Saturday 
+NNP -> <unk> 
+FRAG -> NP_NNP PP 
+FRAG -> FRAG* ADVP_RB 
+FRAG -> PP PP 
+FRAG -> NP INTJ_UH 
+FRAG -> FRAG* PP 
+FRAG -> X NP_NNP 
+FRAG -> X PP 
+FRAG -> WHNP PP 
+FRAG -> FRAG* NP 
+FRAG -> X NP 
+FRAG -> PP VP 
+FRAG -> FRAG* VP 
+FRAG -> NP NP 
+FRAG -> ADVP_RB NP_NNP 
+FRAG_WHNP -> WHNP* PP 
+FRAG_WHNP -> WHNP PP 
+ADVP_RBS -> latest 
+WRB -> How 
+X -> WRB IN 
+X -> VBZ NP_DT 
+X -> WP IN 
+S_VP_VBG -> arriving 
+NP_NNP -> Friday 
+NP_NNP -> Thursday 
+NP_NNP -> Ontario 
+NP_NNP -> Chicago 
+NP_NNP -> Philadelphia 
+NP_NNP -> Denver 
+NP_NNP -> Newark 
+NP_NNP -> Sunday 
+NP_NNP -> Columbus 
+NP_NNP -> Indianapolis 
+NP_NNP -> Phoenix 
+NP_NNP -> Pittsburgh 
+NP_NNP -> Nashville 
+NP_NNP -> Oakland 
+NP_NNP -> Baltimore 
+NP_NNP -> Delta 
+NP_NNP -> Atlanta 
+NP_NNP -> Memphis 
+NP_NNP -> Tampa 
+NP_NNP -> Toronto 
+NP_NNP -> Charlotte 
+NP_NNP -> Miami 
+NP_NNP -> Orlando 
+NP_NNP -> Wednesday 
+NP_NNP -> Burbank 
+NP_NNP -> American 
+NP_NNP -> Westchester 
+NP_NNP -> Detroit 
+NP_NNP -> July 
+NP_NNP -> Montreal 
+NP_NNP -> Dulles 
+NP_NNP -> Houston 
+NP_NNP -> Dallas 
+NP_NNP -> Tacoma 
+NP_NNP -> Cincinnati 
+NP_NNP -> Monday 
+NP_NNP -> Boston 
+NP_NNP -> Tuesday 
+NP_NNP -> Washington 
+NP_NNP -> Minneapolis 
+NP_NNP -> Cleveland 
+NP_NNP -> Milwaukee 
+NP_NNP -> Seattle 
+NP_NNP -> Saturday 
+NP_NNP -> <unk> 
+NP_NNS -> fares 
+NP_NNS -> Airports 
+NP_NNS -> Flights 
+NP_NNS -> stops 
+NP_NNS -> weekdays 
+NP_NNS -> flights 
+NP_NNS -> Wednesdays 
+NP_NNS -> Fares 
+NP_NNS -> meals 
+NP_NNS -> <unk> 
+X_SBARQ -> WHNP SQ_VP 
+WHADVP_WRB -> <unk> 
+SBARQ* -> PP WHNP_WHNP 
+SYM -> A 
+SYM -> P 
+SYM -> D 
+SYM -> <unk> 
+WHNP_WP -> What 
+NP_NN -> Flight 
+NP_NN -> noon 
+NP_NN -> aircraft 
+NP_NN -> Price 
+NP_NN -> price 
+NP_NN -> lunch 
+NP_NN -> dinner 
+NP_NN -> Airline 
+NP_NN -> flight 
+NP_NN -> tomorrow 
+NP_NN -> today 
+NP_NN -> <unk> 
+PP -> IN NP_NN 
+PP -> IN NP_NNP 
+PP -> IN NP_NNS 
+PP -> IN NP_DT 
+PP -> IN NP_NNPS 
+PP -> PP* PP 
+PP -> PP* NP 
+PP -> IN NP_PRP 
+PP -> IN NP 
+PP -> IN ADJP_JJ 
+PP -> PP* S_VP_VBG 
+PP -> TO NP 
+PP -> TO NP_NNP 
+PP -> TO INTJ_UH 
+WHNP* -> WHNP* PP 
+WHNP* -> NP PP 
+WHNP* -> WHNP PP 
+FRAG_NP_NNP -> Tuesday 
+X_TO -> to 
+VP_VBN -> served 
+FRAG_ADJP_JJ -> Nonstop 
+VP_VBG -> <unk> 
+WHNP_WHNP -> WDT NNS 
+WHNP_WHNP -> WHADJP NNS 
+S -> ADVP_RB VP 
+S -> NP VP 
+S -> NP_NN VP_VBN 
+S -> NP_PRP VP 
+S -> NP_NNP VP_VBZ 
+S -> INTJ_UH VP 
+S -> S* VP 
+S -> S* S 
+S -> NP_NN VP 
+VP_VBZ -> has 
+ADVP -> RB PP 
+ADVP -> ADVP_RB PP 
+ADVP -> NP RB 
+MD -> <unk> 
+MD -> 'd 
+MD -> Can 
+MD -> would 
+MD -> should 
+ADJP_JJ -> last 
+ADJP_JJ -> Nonstop 
+ADJP_JJ -> nonstop 
+ADJP_JJ -> <unk> 
+SBARQ -> WHNP SQ 
+SBARQ -> SBARQ* SQ_VP 
+SBARQ -> WHNP_WHNP SQ 
+SBARQ -> WHNP_WP SQ 
+SBARQ -> WHNP_WDT SQ_VP 
+SBARQ -> WHNP_WDT SQ 
+SBARQ -> WHNP SQ_VP 
+SBARQ -> WHADVP_WRB SQ 
+S_VP -> VP* NP 
+S_VP -> VBP NP_NN 
+S_VP -> TO VP 
+S_VP -> VP* VP 
+S_VP -> VBZ ADVP_RB 
+S_VP -> VB NP_PRP 
+S_VP -> VBZ NP_NN 
+S_VP -> VBP NP 
+S_VP -> MD VP 
+S_VP -> VB NP_NNS 
+S_VP -> VP* PP 
+S_VP -> VBP PP 
+S_VP -> VBZ PP 
+S_VP -> VBP ADVP 
+S_VP -> VP* INTJ_UH 
+S_VP -> VBZ NP 
+S_VP -> VB NP 
+SQ_VP -> VBP NP_NN 
+SQ_VP -> VBZ ADVP_RBS 
+SQ_VP -> VBP ADJP_JJ 
+SQ_VP -> VBP VP 
+SQ_VP -> VBZ ADJP_JJ 
+SQ_VP -> VBP NP_NNP 
+SQ_VP -> VP* VP 
+SQ_VP -> VBZ NP_NN 
+SQ_VP -> VBP PP_IN 
+SQ_VP -> VBP NP 
+SQ_VP -> VP* NP 
+SQ_VP -> VP* PP 
+SQ_VP -> VBP ADVP_RB 
+SQ_VP -> VBP NP_NNS 
+SQ_VP -> VBP PP 
+SQ_VP -> VBP ADVP_RBS 
+SQ_VP -> VBZ ADJP_JJR 
+SQ_VP -> VBZ NP 
+VBG -> departing 
+VBG -> Departing 
+VBG -> Leaving 
+VBG -> arriving 
+VBG -> leaving 
+VBG -> <unk> 
+VBD -> <unk> 
+VBN -> served 
+VBN -> <unk> 
+S* -> PP NP_PRP 
+S* -> NP_PRP ADVP_RB 
+S* -> INTJ_UH NP_PRP 
+S* -> ADVP_RB NP_PRP 
+S* -> S CC 
+VBP -> fly 
+VBP -> do 
+VBP -> depart 
+VBP -> want 
+VBP -> Do 
+VBP -> serve 
+VBP -> make 
+VBP -> stop 
+VBP -> leave 
+VBP -> go 
+VBP -> are 
+VBP -> have 
+VBP -> need 
+VBP -> arrive 
+VBP -> <unk> 
+NP_DT -> these 
+NP_DT -> this 
+NP_DT -> any 
+NP_DT -> those 
+NP_DT -> Any 
+VBZ -> arrives 
+VBZ -> is 
+VBZ -> serves 
+VBZ -> Does 
+VBZ -> lives 
+VBZ -> leaves 
+VBZ -> has 
+VBZ -> Is 
+VBZ -> <unk> 
+FRAG_VP -> VP* PP 
+FRAG_VP -> VBG PP 
+FRAG_VP -> VBG NP 
+NN -> coach 
+NN -> number 
+NN -> one 
+NN -> cost 
+NN -> nonstop 
+NN -> transportation 
+NN -> trip 
+NN -> ground 
+NN -> code 
+NN -> Flight 
+NN -> flight 
+NN -> noon 
+NN -> Return 
+NN -> day 
+NN -> tomorrow 
+NN -> way 
+NN -> type 
+NN -> today 
+NN -> airline 
+NN -> fare 
+NN -> evening 
+NN -> return 
+NN -> business 
+NN -> leg 
+NN -> price 
+NN -> night 
+NN -> stop 
+NN -> lunch 
+NN -> aircraft 
+NN -> airfare 
+NN -> reservation 
+NN -> class 
+NN -> Coach 
+NN -> morning 
+NN -> dinner 
+NN -> afternoon 
+NN -> time 
+NN -> Ground 
+NN -> <unk> 
+FRAG_ADJP_JJS -> Cheapest 
+NX -> NX* NX 
+NX -> NN NN 
+NP_CD -> one 
+FRAG_NP -> NP VP_VBG 
+FRAG_NP -> JJS NNS 
+FRAG_NP -> NP* NP 
+FRAG_NP -> NP_NNS ADJP 
+FRAG_NP -> JJS NN 
+FRAG_NP -> NP* NN 
+FRAG_NP -> NNP NN 
+FRAG_NP -> NP* VP 
+FRAG_NP -> NP_NNS PP 
+FRAG_NP -> NP* PP 
+FRAG_NP -> NP_NN PP 
+FRAG_NP -> CD NNS 
+FRAG_NP -> NN NN 
+FRAG_NP -> NP PP 
+FRAG_NP -> NN NNS 
+FRAG_NP -> DT NNS 
+FRAG_NP -> JJ NNS 
+FRAG_NP -> NP* CD 
+FRAG_NP -> NP* ADJP 
+FRAG_NP -> NP* NNS 
+FRAG_NP -> NP* SBAR 
+FRAG_NP -> NP* NP_NNS 
+FRAG_NP -> NP* NP_NN 
+FRAG_NP -> NP* ADVP_RB 
+NP -> NP* SYM 
+NP -> CD CD 
+NP -> JJ NN 
+NP -> CD NNS 
+NP -> NP_NNP NP 
+NP -> CD RB 
+NP -> WDT NNS 
+NP -> JJS NN 
+NP -> NP* NN 
+NP -> DT JJ 
+NP -> NP SBAR_S_VP 
+NP -> NNP NNS 
+NP -> NNP NN 
+NP -> NNP NNP 
+NP -> NP* VP 
+NP -> NP VP 
+NP -> NP_DT PP 
+NP -> NP ADJP_JJ 
+NP -> QP NNS 
+NP -> DT NN 
+NP -> NP* PP 
+NP -> NP_NN PP 
+NP -> NNP JJ 
+NP -> NP* NP 
+NP -> NN NN 
+NP -> NP* NP_NN 
+NP -> NP PP 
+NP -> DT NX 
+NP -> NN NNS 
+NP -> NP* RB 
+NP -> NP_NNS PP 
+NP -> NNP POS 
+NP -> DT NNS 
+NP -> NP_NNS VP 
+NP -> JJ NNS 
+NP -> JJ NNP 
+NP -> NP* CD 
+NP -> CD NN 
+NP -> QP RB 
+NP -> NP* NNS 
+NP -> NP* SBAR 
+NP -> NP* NNP 
+NP -> QP NN 
+NP -> NP_NNP NP_NNP 
+NP -> NP* NP_NNP 
+NP -> NP NNS 
+NP -> NP_CD PP 
+NP -> NP* QP 
+NP -> NP NP 
+NP -> NP SBAR 
+NP -> NP* ADVP 
+CC -> and 
+CC -> or 
+CC -> <unk> 
+PDT -> all 
+PRT_RP -> <unk> 
+CD -> twelve 
+CD -> seven 
+CD -> hundred 
+CD -> thirty 
+CD -> ten 
+CD -> oh 
+CD -> twenty 
+CD -> six 
+CD -> two 
+CD -> forty 
+CD -> fifty 
+CD -> four 
+CD -> eleven 
+CD -> five 
+CD -> three 
+CD -> nine 
+CD -> one 
+CD -> eight 
+CD -> <unk> 
+PP_IN -> from 
+SBAR_S_VP -> TO VP_VB 
+SQ -> INTJ_UH SQ* 
+SQ -> VBZ SQ* 
+SQ -> VBP SQ* 
+SQ -> VBP NP 
+SQ -> VBP NP_NP_EX 
+SQ -> MD SQ* 
+SQ -> VBZ NP_PRP 
+SQ -> VBZ NP 
+SQ -> X SQ* 
+JJS -> <unk> 
+JJS -> Cheapest 
+JJS -> cheapest 
+JJS -> least 
+JJS -> earliest 
+JJS -> Shortest 
+JJS -> latest 
+JJR -> <unk> 
+JJR -> less 
+NX_NN -> aircraft 
+NX* -> NX_NN CC 
+QP* -> CD CD 
+QP* -> RB JJR 
+QP* -> QP* CD 
+QP* -> RBR IN 
+QP* -> IN JJS 
+QP* -> QP* IN 
+INTJ_UH -> Okay 
+INTJ_UH -> oh 
+INTJ_UH -> Please 
+INTJ_UH -> please 
+INTJ_UH -> Thanks 
+INTJ_UH -> <unk> 
+NP_NNPS -> Wednesdays 
+NP_PRP -> I 
+NP_PRP -> me 
+NP_PRP -> you 
+NP_PRP -> it 
+NP_PRP -> <unk> 
+ADJP -> JJ PP 
+ADJP -> RBS JJ 
+ADJP -> JJR PP 
+ADJP -> ADJP* PP 
+TOP -> FRAG_ADJP_JJS PUNC 
+TOP -> S PUNC 
+TOP -> FRAG_NP_NNP PUNC 
+TOP -> FRAG_WHNP PUNC 
+TOP -> FRAG_NP PUNC 
+TOP -> ADJP_JJ PUNC 
+TOP -> X_SBARQ PUNC 
+TOP -> SBARQ PUNC 
+TOP -> FRAG_ADJP_JJ PUNC 
+TOP -> SQ PUNC 
+TOP -> FRAG_PP PUNC 
+TOP -> FRAG_NP_NN PUNC 
+TOP -> FRAG PUNC 
+TOP -> INTJ_UH PUNC 
+TOP -> NP PUNC 
+TOP -> X_S_VP PUNC 
+TOP -> SBAR PUNC 
+TOP -> S_VP PUNC 
+TOP -> FRAG_VP PUNC 
+DT -> a 
+DT -> all 
+DT -> that 
+DT -> this 
+DT -> All 
+DT -> any 
+DT -> these 
+DT -> Any 
+DT -> the 
+DT -> The 
+DT -> those 
+DT -> <unk> 
+ADJP_JJR -> better 
+POS -> 's 
+TO -> to 
+WHNP_WDT -> Which 
+WHNP_WDT -> that 
+VP_VB -> leave 
+VP_VB -> cost 
+VP_VB -> stop 
+VP_VB -> <unk> 
+VB -> fly 
+VB -> be 
+VB -> stop 
+VB -> return 
+VB -> like 
+VB -> Show 
+VB -> List 
+VB -> travel 
+VB -> show 
+VB -> serve 
+VB -> make 
+VB -> leave 
+VB -> list 
+VB -> Explain 
+VB -> have 
+VB -> visit 
+VB -> go 
+VB -> arrive 
+VB -> find 
+VB -> Thank 
+VB -> <unk> 
+ADJP* -> RB RB 
+PP* -> PP* IN 
+PP* -> NP IN 
+PP* -> IN CC 
+PP* -> PP CC 
+RBS -> least 
+RBR -> less 
+VP -> VP* ADJP 
+VP -> VBP S_VP 
+VP -> VB PP 
+VP -> VP* VP 
+VP -> VP* ADVP 
+VP -> VBZ PP 
+VP -> VP* NP_NN 
+VP -> VB NP 
+VP -> VP* NP 
+VP -> VB NP_NNS 
+VP -> VBP NP 
+VP -> VB NP_NNP 
+VP -> VB NP_NN 
+VP -> VP* PP 
+VP -> VBD NP 
+VP -> VBP ADJP 
+VP -> VBN PP 
+VP -> VBG NP_NNP 
+VP -> VBZ NP 
+VP -> VB S_VP 
+VP -> TO VP 
+VP -> VBG NP 
+VP -> MD VP 
+VP -> VBP PP 
+VP -> VB S 
+VP -> VBG PP 
+VP -> VBP FRAG 
+X_S_VP -> VP* NP 
+IN -> on 
+IN -> about 
+IN -> via 
+IN -> from 
+IN -> around 
+IN -> for 
+IN -> On 
+IN -> of 
+IN -> after 
+IN -> With 
+IN -> than 
+IN -> as 
+IN -> at 
+IN -> in 
+IN -> between 
+IN -> From 
+IN -> before 
+IN -> with 
+IN -> by 
+IN -> <unk> 
+VP* -> VP* X_TO 
+VP* -> VP* NP 
+VP* -> VB PRT_RP 
+VP* -> VBG NP_NNP 
+VP* -> VB PP 
+VP* -> VBP NP_NNP 
+VP* -> VB NP_PRP 
+VP* -> VBP RB 
+VP* -> VB ADVP_RB 
+VP* -> VP* PP 
+VP* -> VBP PP 
+VP* -> VBG NP 
+VP* -> VBZ PP 
+VP* -> VBG PP 
+VP* -> VB ADVP 
+VP* -> VP CC 
+QP -> QP* CD 
+QP -> RB CD 
+QP -> CC JJR 
+FRAG* -> NP_NNP PP 
+FRAG* -> PP PP 
+FRAG* -> FRAG* PP 
+FRAG* -> NP_NN PP 
+FRAG* -> WHNP PP 
+FRAG* -> FRAG* NP 
+FRAG* -> NP NP 
+FRAG_PP -> IN NP_NNP 
+FRAG_PP -> IN NP 
+WHADJP -> WRB JJ 
+WHNP -> WRB RB 
+WHNP -> WHNP_WDT PP 
+WHNP -> WDT NN 
+WHNP -> WHADJP NNS 
+WHNP -> WHNP PP 
+WHNP -> WHNP ADJP_JJ 
+WHNP -> WDT NNS 
+

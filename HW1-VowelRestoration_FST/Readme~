@@ -1,0 +1,40 @@
+----------------------------------------------------------------------------------Readme------------------------------------------------
+
+USC ID : 7349-7199-00
+Name : Satheeshkumar Karuppusamy
+
+If you run the submitted python file and generate the output, the file names will be different than what has been mentioned below.
+
+
+Files included :
+
+1.english.fsa --- For question number2
+2.removevowelsq3.fst ---- For question numbers 3 and 4
+3.removevowelsq5composed.fst ---- For question number 5
+4.removevowelsq6.fst --- For question number 6
+5.hw1.py -- implementation for question numbers 2 and 6
+
+Output files :
+
+1.q2strings.out -- outputfile for questionnumber 2 good strings
+2.q2badstrings.out -- outputfile for questionnumber 2 bad strings
+3.strings.restoredq4 -- restored vowel string file for question 4
+4.strings.restoredq6 -- restored vowel string file for question 6
+
+Other files :
+
+1.vocab
+2.strings
+3.strings.bad
+
+
+Instructions to run the given programs :
+
+1. Dowlnload Carmel
+
+2. Enter the following command in Unix shell
+python hw1.py
+
+3. Three output files will be produced which will represent state transition informations
+
+4. Run them through carmel following the intructions given in the pdf
